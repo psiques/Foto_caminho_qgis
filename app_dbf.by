@@ -8,13 +8,14 @@ def criar_dbf_com_nomes(diretorio):
     dbf = DBF(filename=os.path.join(diretorio, 'nomes_fotos.dbf'), fields=campos, dbt=False)
 
     # Percorrer os arquivos no diretório
-    num_foto = '1'
     for nome_arquivo in os.listdir(diretorio):
         cam_foto = os.path.join(diretorio, nome_arquivo)
         if os.path.isfile(cam_foto) and nome_arquivo.endswith('.jpg'):
+            # Extrair os caracteres desejados do nome do arquivo
+            num_foto = nome_arquivo[2:5] + nome_arquivo[7:12]
+
             # Adicionar o número da foto e o caminho ao arquivo DBF
             dbf.write({"num_foto": num_foto, "cam_foto": cam_foto})
-            num_foto = str(int(num_foto) + 1)
 
     print('Arquivo DBF salvo com sucesso!')
 
