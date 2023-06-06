@@ -1,24 +1,30 @@
 import os
-from dbfread import DBF
-from dbfread import Field
+import openpyxl
 
-def criar_dbf_com_nomes(diretorio):
-    # Criar a estrutura do arquivo DBF
-    campos = [Field("num_foto", "C", 10), Field("cam_foto", "C", 255)]
-    dbf = DBF(filename=os.path.join(diretorio, 'nomes_fotos.dbf'), fields=campos, dbt=False)
+def criar_xlsx_com_nomes(Diretorio):
+    # Criar uma instância do Workbook
+    wb = openpyxl.Workbook()
+    # Selecionar a primeira planilha
+    planilha = wb.active
+
+    # Definir o cabeçalho das colunas
+    planilha['A1'] = 'Fotos'
+    planilha['B1'] = 'Diretorio'
 
     # Percorrer os arquivos no diretório
-    for nome_arquivo in os.listdir(diretorio):
-        cam_foto = os.path.join(diretorio, nome_arquivo)
+    num_foto = 1
+    for nome_arquivo in os.listdir(Diretorio):
+        cam_foto = os.path.join(Diretorio, nome_arquivo)
         if os.path.isfile(cam_foto) and nome_arquivo.endswith('.jpg'):
-            # Extrair os caracteres desejados do nome do arquivo
-            num_foto = 'h'+nome_arquivo[2:5] + nome_arquivo[7:12]
+            # Adicionar o número da foto e o caminho à planilha
+            planilha.append([num_foto, cam_foto])
+            num_foto = 'h'+str(nome_arquivo[11:13])+str(nome_arquivo[14:16])+str(nome_arquivo[17:19])+',000'
 
-            # Adicionar o número da foto e o caminho ao arquivo DBF
-            dbf.write({"num_foto": num_foto, "cam_foto": cam_foto})
-
-    print('Arquivo DBF salvo com sucesso!')
+    # Salvar o arquivo XLSX
+    nome_arquivo_xlsx = os.path.join(Diretorio, 'nomes_fotos.xlsx')
+    wb.save(nome_arquivo_xlsx)
+    print(f'Arquivo {nome_arquivo_xlsx} salvo com sucesso!')
 
 # Solicitar o diretório ao usuário
-diretorio = input("Digite o caminho para o diretório: ")
-criar_dbf_com_nomes(diretorio)
+Diretorio = input("Digite o caminho para o diretório: ")
+criar_xlsx_com_nomes(Diretorio)
